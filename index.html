@@ -22,7 +22,7 @@
             }
 
             if (!isTelegramMobile()) {
-                alert("عذرا، لا يمكن الوصول إلا من خلال تطبيق تلجرام على جهاز الهاتف المحمول!");
+                // alert("عذرا، لا يمكن الوصول إلا من خلال تطبيق تلجرام على جهاز الهاتف المحمول!");
                 window.stop(); // Stop further resource loading
                 document.documentElement.innerHTML = ""; // Wipe out any content
                 throw new Error("Not accessed from Telegram mobile app.");
